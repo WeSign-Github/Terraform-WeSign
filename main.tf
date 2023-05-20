@@ -105,21 +105,13 @@ module "gcs_buckets" {
 # CLOUD SQL
 
 # CLOUD RUN SERVICES
-# resource "google_cloud_run_service" "default" {
-#   name     = "wesign-cloudrun"
-#   location = process.env.LOCATION
+module "cloud_run" {
+  source  = "GoogleCloudPlatform/cloud-run/google"
+  version = "~> 0.2.0"
 
-#   template {
-#     spec {
-#       containers {
-#         # TODO
-#         image = "us-docker.pkg.dev/cloudrun/container/hello"
-#       }
-#     }
-#   }
-
-#   traffic {
-#     percent         = 100
-#     latest_revision = true
-#   }
-# }
+  # Required variables
+  service_name           = var.cloud_run_services_name
+  project_id             = var.project_id
+  location               = var.location
+  image                  = var.cloud_run_image
+}
