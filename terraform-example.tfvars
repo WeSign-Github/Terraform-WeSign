@@ -78,12 +78,18 @@ storage_buckets_iam_bindings={
 artifact_registry_repository_id="api-repo"
 
 # CLOUD RUN
+cloud_run_service_name="api-deployment"
+cloud_run_image="gcr.io/cloudrun/api-deployment"
 
 # STORAGE CONFIGURATION
 # CLOUD STORAGE
-gcs_buckets_names=["public-bucket"]
-cloud_storage_admins=[]
-gcs_buckets_admins={}
+# gcs_buckets_names=["public-bucket"]
+# cloud_storage_admins=["group:foo-admins@example.com"]
+# gcs_buckets_admins={}
+bucket_iam_members=[{
+    role   = "roles/storage.objectViewer"
+    member = "group:test-gcp-ops@test.blueprints.joonix.net"
+  }]
 
 # CLOUD SQL
 

@@ -58,49 +58,46 @@ resource "google_artifact_registry_repository" "api-repo" {
 }
 
 # CLOUD STORAGE
-module "gcs_buckets" {
-  source  = "terraform-google-modules/cloud-storage/google"
-  version = "~> 4.0"
-  project_id  = var.project_id
-  names = ["first", "second"]
-  prefix = "my-unique-prefix"
-  set_admin_roles = true
-  admins = ["group:foo-admins@example.com"]
-  versioning = {
-    first = false
-  }
-  bucket_admins = {
-    second = "user:spam@example.com,eggs@example.com"
-  }
-}
-
-# module "bucket" {
-#   source = "../../modules/simple_bucket"
-
-#   name       = "${var.project_id}-bucket"
-#   project_id = var.project_id
-#   location   = "us"
-
-#   lifecycle_rules = [{
-#     action = {
-#       type = "Delete"
-#     }
-#     condition = {
-#       age            = 365
-#       with_state     = "ANY"
-#       matches_prefix = var.project_id
-#     }
-#   }]
-
-#   custom_placement_config = {
-#     data_locations : ["US-EAST4", "US-WEST1"]
+# module "gcs_buckets" {
+#   source  = "terraform-google-modules/cloud-storage/google"
+#   version = "~> 4.0"
+#   project_id  = var.project_id
+#   names = var.gcs_buckets_names
+#   prefix = "my-unique-prefix"
+#   set_admin_roles = true
+#   admins = var.cloud_storage_admins
+#   versioning = {
+#     first = false
 #   }
-
-#   iam_members = [{
-#     role   = "roles/storage.objectViewer"
-#     member = "group:test-gcp-ops@test.blueprints.joonix.net"
-#   }]
+#   bucket_admins = {
+#     second = "user:spam@example.com,eggs@example.com"
+#   }
 # }
+
+module "bucket" {
+  source = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
+
+  name       = "${var.project_id}-bucket"
+  project_id = var.project_id
+  location   = var.location
+
+  lifecycle_rules = [{
+    action = {
+      type = "Delete"
+    }
+    condition = {
+      age            = 365
+      with_state     = "ANY"
+      matches_prefix = var.project_id
+    }
+  }]
+
+  # custom_placement_config = {
+  #   data_locations : ["US-EAST4", "US-WEST1"]
+  # }
+
+  iam_members = var.bucket_iam_members
+}
 
 # CLOUD SQL
 
